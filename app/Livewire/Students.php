@@ -31,7 +31,7 @@ class Students extends Component
     public function mount()
     {
         $this->sessionUser = auth()->user()->id;
-        $this->updateStudents(); 
+        $this->updateStudents();
 
         $this->states = State::all();
         $this->roles = Role::where('name', 'Estudiante')->get();
@@ -40,8 +40,8 @@ class Students extends Component
     public function delete($id)
     {
         try {
-            User::where('id',$id)->delete();
-            return $this->redirect('/std/r',navigate:true); 
+            User::where('id', $id)->delete();
+            return $this->redirect('/std/r', navigate: true);
         } catch (\Exception $th) {
             dd($th);
         }
@@ -56,8 +56,8 @@ class Students extends Component
                 'state_id' => 2
             ]);
 
-            $this->updateStudents(); 
-            $this->reset(['name','email','date_of_birth','phone','state_id','rol_id']);
+            $this->updateStudents();
+            $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id']);
             session()->flash('message', 'Usuario inactivado correctamente.');
         } catch (\Exception $th) {
             dd($th);
@@ -86,11 +86,12 @@ class Students extends Component
                 'email' => $this->email,
                 'date_of_birth' => $this->date_of_birth,
                 'name' => $this->name,
-                'phone' => $this->phone
+                'phone' => $this->phone,
+                'state_id' => $this->state_id,
             ]);
 
-            $this->updateStudents(); 
-            $this->reset(['name','email','date_of_birth','phone','state_id','rol_id','password','password_confirmation','academy_id']);
+            $this->updateStudents();
+            $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id', 'password', 'password_confirmation']);
             session()->flash('message', 'Usuario actualizado correctamente.');
         } catch (\Exception $th) {
             dd($th);
@@ -115,12 +116,12 @@ class Students extends Component
             $user->assignRole($this->rol_id);
 
             AcademyUser::create([
-                'academy_id'=> AcademyUser::where('user_id', $this->sessionUser)->first()->academy_id,
-                'user_id'=> $user->id,
+                'academy_id' => AcademyUser::where('user_id', $this->sessionUser)->first()->academy_id,
+                'user_id' => $user->id,
             ]);
 
-            $this->updateStudents(); 
-            $this->reset(['name','email','date_of_birth','phone','state_id','rol_id','password','password_confirmation','academy_id']);
+            $this->updateStudents();
+            $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id', 'password', 'password_confirmation', 'academy_id']);
             session()->flash('message', 'Usuario creado correctamente.');
         } catch (\Exception $th) {
             dd($th);
@@ -129,7 +130,7 @@ class Students extends Component
 
     public function render()
     {
-        return view('livewire.students',[
+        return view('livewire.students', [
             'teachers' => $this->students
         ]);
     }
@@ -138,28 +139,26 @@ class Students extends Component
     public function updateStudents()
     {
         if (User::find($this->sessionUser)->hasRole('Profesor')) {
-            
         }
         if (User::find($this->sessionUser)->hasRole('SuperAdmin')) {
             $this->students = User::role('Estudiante')->whereHas('state', function ($query) {
                 $query->where('id', '1'); // Filtra para el estado activo
             })
-            ->with('academyUsers.academy','state')
-            ->get();
+                ->with('academyUsers.academy', 'state')
+                ->get();
             //taer las academias que se encuentran activas
             $this->academies = Academy::where('state_id', 1)->get();
-        }
-        else if (User::find($this->sessionUser)->hasRole('Administrador')){
+        } else if (User::find($this->sessionUser)->hasRole('Administrador')) {
             $academyId = AcademyUser::where('user_id', $this->sessionUser)->first()->academy_id;
 
             $this->students = User::role('Estudiante')->whereHas('state', function ($query) {
                 $query->where('id', '1'); // Filtra para el estado activo
             })
-            ->whereHas('academyUsers.academy', function ($query) use ($academyId) {
-                $query->where('id', $academyId); // Filtra por el ID de la academia específica
-            })
-            ->with('academyUsers.academy','state')
-            ->get();
-        } 
+                ->whereHas('academyUsers.academy', function ($query) use ($academyId) {
+                    $query->where('id', $academyId); // Filtra por el ID de la academia específica
+                })
+                ->with('academyUsers.academy', 'state')
+                ->get();
+        }
     }
 }
