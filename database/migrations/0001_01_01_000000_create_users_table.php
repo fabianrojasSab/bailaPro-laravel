@@ -35,6 +35,14 @@ return new class extends Migration
             $table->integer('rating');
         });
 
+        Schema::create('services', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('academy_id')->references('id')->on('academies')->onDelete('cascade');
+            $table->string('name');
+            $table->string('description');
+            $table->integer('price');
+        });
+
         //=============================> Tabla Usuarios <=============================
         Schema::create('users', function (Blueprint $table) {
             $table->id();
@@ -58,16 +66,25 @@ return new class extends Migration
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('academy_id')->references('id')->on('academies');
+            $table->foreignId('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->string('name');
             $table->string('description');
             $table->string('duration');
-            $table->string('schedule');
-            $table->integer('capacity');
             $table->date('start_date');
             $table->date('end_date');
-            $table->foreignId(('state_id'))->references('id')->on('states');
+            $table->integer('state');
         });
 
+        Schema::create('schedules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('lesson_id')->references('id')->on('lessons');
+            $table->foreignId('teacher_id')->references('id')->on('users');
+            $table->integer('day');    //day: 1 = monday, 2 = tuesday, 3 = wednesday, 4 = thursday, 5 = friday, 6 = saturday, 7 = sunday
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->integer('capacity');
+            $table->date('date');
+        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -106,11 +123,23 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
+        // Eliminar restricciones de claves foráneas primero (esto depende del motor y la versión)
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
+        // Eliminar las tablas en el orden correcto
+        Schema::dropIfExists('schedules');
         Schema::dropIfExists('sessions');
-        Schema::dropIfExists('clases');
-        Schema::dropIfExists('states');
+        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('specialties');
+        Schema::dropIfExists('states');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('services');
+        Schema::dropIfExists('lessons');
+        Schema::dropIfExists('academies');
+        
+        // Restaurar las restricciones de claves foráneas
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
+    
+    
 };

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\AcademyUser;
@@ -51,16 +52,19 @@ class Students extends Component
     public function disable($id)
     {
         try {
+            DB::beginTransaction();
             $student = User::findOrFail($id);
             $student->update([
                 'state_id' => 2
             ]);
 
+            DB::commit();
             $this->updateStudents();
             $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id']);
             session()->flash('message', 'Usuario inactivado correctamente.');
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
@@ -81,6 +85,7 @@ class Students extends Component
     public function update()
     {
         try {
+            DB::beginTransaction();
             $student = User::findOrFail($this->studentId);
             $student->update([
                 'email' => $this->email,
@@ -93,14 +98,18 @@ class Students extends Component
             $this->updateStudents();
             $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id', 'password', 'password_confirmation']);
             session()->flash('message', 'Usuario actualizado correctamente.');
+            DB::commit();
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
     public function save()
     {
         try {
+            DB::beginTransaction();
+
             $user = User::create([
                 'email' => $this->email,
                 'date_of_birth' => $this->date_of_birth,
@@ -121,10 +130,12 @@ class Students extends Component
             ]);
 
             $this->updateStudents();
-            $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id', 'password', 'password_confirmation', 'academy_id']);
+            $this->reset(['name', 'email', 'date_of_birth', 'phone', 'state_id', 'rol_id', 'password', 'password_confirmation']);
             session()->flash('message', 'Usuario creado correctamente.');
+            DB::commit();
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 

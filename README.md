@@ -1,66 +1,161 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Nombre del Proyecto
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Descripción breve de lo que hace el proyecto.
 
-## About Laravel
+## Tabla de Contenidos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Descripción del Proyecto](#descripción-del-proyecto)
+- [Tecnologías Usadas](#tecnologías-usadas)
+- [Requisitos del Sistema](#requisitos-del-sistema)
+- [Instalación](#instalación)
+- [Comandos Iniciales](#comandos-iniciales)
+- [Base de Datos](#base-de-datos)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Contribuir](#contribuir)
+- [Licencia](#licencia)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Descripción del Proyecto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Aquí puedes colocar una descripción más detallada de lo que hace el proyecto. Explica su propósito, características, y cualquier otra información relevante. Por ejemplo:
 
-## Learning Laravel
+Este proyecto es una aplicación web basada en Laravel que permite a los usuarios gestionar tareas diarias. Los usuarios pueden crear, editar y eliminar tareas, así como asignarlas a diferentes categorías.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tecnologías Usadas
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Este proyecto utiliza las siguientes tecnologías y paquetes:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Backend
+- **Laravel**: Framework PHP utilizado para el desarrollo backend.
+- **Jetstream**: Paquete de Laravel para la autenticación de usuarios y administración de sesiones.
+- **Sanctum**: Paquete para la autenticación de API en Laravel.
+- **JWT-Auth**: Paquete para la autenticación utilizando tokens JWT.
+- **Spatie Laravel Permission**: Paquete para gestionar roles y permisos de usuarios.
+- **Livewire**: Paquete para crear interfaces dinámicas sin escribir JavaScript.
 
-## Laravel Sponsors
+### Frontend
+- **Tailwind CSS**: Framework CSS para diseño y estilos rápidos y personalizables.
+- **Vite**: Herramienta de construcción moderna para proyectos frontend, utilizada en Laravel para empaquetar y optimizar activos.
+- **Alpine.js**: Framework JavaScript ligero para agregar interactividad a las vistas sin necesidad de un framework complejo como Vue.js o React.
+- **Livewire**: (también en frontend) Para construir interfaces dinámicas y reactivas utilizando PHP, sin necesidad de escribir mucho JavaScript.
+- **Laravel Mix**: Herramienta para compilar assets, aunque en Laravel 9+ se ha sustituido por Vite, Mix sigue siendo una opción popular en proyectos anteriores.
+- **Sass** (opcional): Si estás utilizando Sass para la compilación de CSS.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Otras herramientas y librerías
+- **Faker**: Paquete para generar datos ficticios en el desarrollo.
+- **Concurrently**: Paquete para ejecutar múltiples procesos de forma simultánea en el entorno de desarrollo.
+- **Axios**: Para realizar solicitudes HTTP desde el frontend (si se usa en el proyecto).
+- **Alpine.js**: Framework minimalista de JavaScript utilizado para agregar interactividad sin la necesidad de frameworks complejos.
 
-### Premium Partners
+## Requisitos del Sistema
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Antes de comenzar, asegúrate de tener instalados los siguientes requisitos en tu sistema:
 
-## Contributing
+- **PHP** 8.2 o superior
+- **Composer** para gestionar dependencias
+- **Node.js** y **npm** para las dependencias front-end
+- **Docker** (si estás utilizando Laravel Sail)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Instalación
 
-## Code of Conduct
+Sigue estos pasos para instalar el proyecto en tu máquina local:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Clona el repositorio:
+    ```bash
+    git clone https://github.com/fabianrojasSab/bailaPro-laravel.git
+    ```
 
-## Security Vulnerabilities
+2. Navega a la carpeta del proyecto:
+    ```bash
+    cd bailaPro-laravel
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. Instala las dependencias de PHP con Composer:
+    ```bash
+    composer install
+    ```
 
-## License
+4. Instala las dependencias de JavaScript con npm:
+    ```bash
+    npm install
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. Crea el archivo `.env` a partir del archivo de ejemplo:
+    ```bash
+    cp .env.example .env
+    ```
+
+6. Genera la clave de la aplicación de Laravel:
+    ```bash
+    php artisan key:generate
+    ```
+
+7. (Opcional) Si estás usando Docker, inicia Sail:
+    ```bash
+    ./vendor/bin/sail up
+    ```
+
+8. Si no usas Sail, puedes iniciar el servidor de desarrollo con:
+    ```bash
+    php artisan serve
+    ```
+
+## Comandos Iniciales
+
+Algunos de los comandos más utilizados en el proyecto:
+- **Levantar los estaticos**:
+    ```bash
+    npm run rev
+    ```
+
+- **Levantar el servidor local**:
+    ```bash
+    php artisan serve
+    ```
+
+- **Correr las migraciones de la base de datos y los datos base**:
+    ```bash
+    php artisan migrate --seed --force
+    ```
+
+- **Generar un nuevo controlador**:
+    ```bash
+    php artisan make:controller NombreDelControlador
+    ```
+
+- **Generar un nuevo modelo**:
+    ```bash
+    php artisan make:model NombreDelModelo
+    ```
+
+- **Generar una nueva migración**:
+    ```bash
+    php artisan make:migration nombre_de_migracion
+    ```
+
+
+##  Convenciones usadas
+
+- Modelos: Singular, PascalCase (User, OrderItem).
+- Tablas: Plural, minúsculas y con guiones bajos (users, order_items).
+- Controladores: PascalCase con Controller al final (UserController, ProductController).
+- Rutas: Minúsculas, kebab-case (/user-profile, /order-items).
+- Interfaces: PascalCase con prefijo I (IUserRepository, IProductService).
+- Servicios y Repositorios: PascalCase (UserService, ProductRepository).
+- Middleware: PascalCase (Authenticate, CheckAge).
+- Migraciones: create_{table_name}_table (create_users_table).
+- Factories: Singular, con Factory al final (UserFactory, ProductFactory).
+- Políticas: PascalCase, {Model}Policy (ProductPolicy, UserPolicy).
+
+## Documentation
+
+[Documentation](https://linktodocumentation)
+
+
+## Authors
+- [@juan-ubaque](https://github.com/juan-ubaque)
+- [@fabianrojasSab](https://github.com/fabianrojasSab)
+## Licencia
+
+Este proyecto está protegido por **todos los derechos reservados**. No se permite la modificación, distribución ni uso del software sin el permiso explícito del titular de los derechos de autor.
+
+**Copyright (c) 2024 BytecreaColombia. Todos los derechos reservados.**

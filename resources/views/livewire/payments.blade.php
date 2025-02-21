@@ -30,7 +30,7 @@
             </div>
             <div class="relative z-0 w-full mb-5 group">
                 <label for="estudiante_id" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona el estudiante</label>
-                <select id="estudiante_id" name="estudiante_id" wire:model="student_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select id="estudiante_id" name="estudiante_id" wire:model="student_id" wire:change="getLessons"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option>...</option>
                     @foreach ($students as $student)
                         <tr>
@@ -39,6 +39,21 @@
                     @endforeach
                 </select>
             </div>
+            @if ($lessonsStudent)
+                <div class="relative z-0 w-full mb-5 group">
+                    <label for="claseId" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona la clase</label>
+                    <select id="claseId" name="claseId" wire:model="lesson_id" wire:change="getLesson()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option>...</option>
+                        @foreach ($lessonsStudent as $lessonStudent)
+                            <tr>
+                                <option value="{{$lessonStudent->lesson->id}}">{{$lessonStudent->lesson->name}}</option>
+                            </tr>
+                        @endforeach
+                    </select>
+                </div>
+            @else
+                
+            @endif
             <x-button class="ms-4" wire:click.prevent="{{ $paymentId ? 'update' : 'save' }}">
                 {{ $paymentId ? __('Actualizar') : __('Registrar') }}
             </x-button>
@@ -80,10 +95,10 @@
                         @foreach ($payments as $payment)
                             <tr>
                                 <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                    {{$payment->name}}
+                                    {{$payment->description}}
                                 </th>
                                 <th  class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                    {{$payment->date}}
+                                    {{$payment->payment_date}}
                                 </th>
                                 <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
                                     {{$payment->amount}}

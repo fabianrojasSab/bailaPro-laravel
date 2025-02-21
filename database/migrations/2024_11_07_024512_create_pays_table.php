@@ -11,16 +11,47 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pays', function (Blueprint $table) {
+        //=============================> Tabla metodos de pagos <=============================
+        Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description');
+        });
+
+        //=============================> Tabla de parametros para los metodos de pagos <=============================
+        Schema::create('payment_method_parameters', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('payment_method_id')->references('id')->on('payment_methods');
+            $table->string('param_name');
+            $table->text('param_type');
+        });
+
+         //=============================> Tabla de configuracion de pagos a profesores <=============================
+        Schema::create('teacher_payment_settings', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('teacher_id')->references('id')->on('users');
+            $table->foreignId('payment_method_id')->references('id')->on('payment_methods');
+            $table->string('param_name');
+            $table->text('param_value');
+        });
+
+        //=============================> Tabla de pagos de estudiantes <=============================
+        Schema::create('student_payments', function (Blueprint $table) {
+            $table->id();
             $table->string('description');
-            $table->decimal('amount', 8, 2);
-            $table->date('date');
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('state_id')->references('id')->on('states');
-            // $table->foreignId('pay_type_id')->references('id')->on('pay_types'); //pensar si es necesario
-            $table->timestamps();
+            $table->foreignId('student_id')->references('id')->on('users');
+            $table->foreignId('service_id')->references('id')->on('services');
+            $table->integer('amount');
+            $table->date('payment_date');
+        });
+
+        //=============================> Tabla de pagos de profesores <=============================
+        Schema::create('teacher_payments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('teacher_id')->references('id')->on('users');
+            $table->foreignId('payment_method_id')->references('id')->on('payment_methods');
+            $table->integer('amount');
+            $table->date('payment_date');
         });
     }
 
@@ -29,6 +60,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pays');
+        Schema::dropIfExists('teacher_payments');
+        Schema::dropIfExists('student_payments');
+        Schema::dropIfExists('teacher_payment_settings');
+        Schema::dropIfExists('payment_method_parameters');
+        Schema::dropIfExists('payment_methods');
     }
 };

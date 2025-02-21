@@ -16,4 +16,9 @@ class Service extends Model
     {
         return $this->belongsTo(Academy::class);
     }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_services', 'service_id', 'lesson_id');
+    }
 }

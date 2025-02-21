@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\Role;
@@ -72,6 +73,7 @@ class Usuarios extends Component
     public function update()
     {
         try {
+            DB::beginTransaction();
             $usuario = User::findOrFail($this->usuarioId);
             $usuario->update([
                 'name' => $this->name,
@@ -89,17 +91,20 @@ class Usuarios extends Component
                 'academy_id'=> $this->academyId
             ]);
 
+            DB::commit();
             $this->updateUsers();
             $this->reset(['name','email','date_of_birth','phone','state_id','rol_id','academyId','password','password_confirmation']);
             session()->flash('message', 'Usuario actualizado correctamente.');
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
     public function save()
     {
         try {
+            DB::beginTransaction();
             $sessionUser = auth()->user()->id;
 
             $user = User::create([
@@ -126,12 +131,14 @@ class Usuarios extends Component
                 }
             }
 
-            $this->users = User::with('state','roles')->get();
-            $this->reset('name','email','date_of_birth','phone','state_id','password','password_confirmation','rol_id','academyId');
+            DB::commit();
+            $this->updateUsers();
+            $this->reset('name','email','date_of_birth','phone','state_id','password','password_confirmation','rol_id');
             session()->flash('message', 'Usuario creado correctamente.');
 
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 

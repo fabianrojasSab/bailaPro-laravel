@@ -10,6 +10,7 @@ use App\Livewire\Inscriptions;
 use App\Livewire\Roles;
 use App\Livewire\Dashboard;
 use App\Models\Role;
+use App\Livewire\Schedules;
 
 
 
@@ -49,6 +50,11 @@ Route::middleware([
 // Prefijo para las clases de baile
     Route::prefix('lsn')->group(function () {
         Route::get('r', Lessons::class)->name('lsn.r'); 
+    });
+
+//Prefijo para horarios
+    Route::prefix('sch')->group(function () {
+        Route::get('r', Schedules::class)->name('sch.r'); 
     });
 
 // Prefijo para los estudiantes

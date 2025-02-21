@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\ClaseUser;
+use App\Models\Schedule;
 use App\Models\Inscripciones;
 use App\Models\Academy;
 use App\Models\TeacherLesson;
+use Illuminate\Support\Facades\DB;  // Asegúrate de importar DB
 
 class Lesson extends Model
 {
@@ -19,28 +20,21 @@ class Lesson extends Model
         'name',
         'description',
         'duration',
-        'schedule',
-        'capacity',
         'start_date',
         'end_date',
-        // 'quota',// Pendiente
-        'state_id',
-        'academy_id'
+        'state',
+        'academy_id',
+        'service_id'
     ];
 
     public function academy()
     {
         return $this->belongsTo(Academy::class);
     }
-
-    public function teachers()
+    
+    public function schedules()
     {
-        return $this->belongsToMany(User::class, 'teacher_lessons', 'lesson_id', 'user_id');
-    }
-
-    public function inscriptions()
-    {
-        return $this->hasMany(ClaseUser::class, 'clase_id');
+        return $this->hasMany(Schedule::class, 'lesson_id');
     }
 
     public static function inscriptionsByStudent($studentId)
@@ -48,5 +42,10 @@ class Lesson extends Model
         return self::whereHas('inscriptions', function($query) use ($studentId) {
             $query->where('user_id', $studentId);
         })->get();
+    }
+
+    public function services()
+    {
+        return self::hasMany(Service::class, 'id');
     }
 }

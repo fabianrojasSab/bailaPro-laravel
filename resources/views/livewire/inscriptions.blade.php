@@ -15,7 +15,7 @@
                 @csrf
                 <div class="relative z-0 w-full mb-5 group">
                     <label for="estudiante_id" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona un estudiante</label>
-                    <select id="estudiante_id" name="estudiante_id" wire:model="user_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="estudiante_id" name="estudiante_id" wire:model="student_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option>...</option>
                         @foreach ($students as $student)
                             <tr>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="relative z-0 w-full mb-5 group">
                     <label for="clase_id" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona una clase</label>
-                    <select id="clase_id" name="clase_id" wire:model="clase_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="clase_id" name="clase_id" wire:model="lesson_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option>...</option>
                         @foreach ($lessons as $lesson)
                             <tr>
@@ -80,10 +80,10 @@
                                         @endforelse
                                     </th> --}}
                                     <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                        {{ $inscription->user ? $inscription->user->name : 'Estudiante no encontrado' }}
+                                        {{ $inscription->student ? $inscription->student->name : 'Estudiante no encontrado' }}
                                     </th>
                                     <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                        {{ $inscription->clase ? $inscription->clase->name : 'Clase no encontrada' }}
+                                        {{ $inscription->lesson ? $inscription->lesson->name : 'Clase no encontrada' }}
                                     </th>
                                     <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
                                         {{$inscription->inscription_date}}

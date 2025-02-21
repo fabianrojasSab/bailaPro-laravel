@@ -32,10 +32,6 @@
                     <label for="duracion" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Duracion</label>
                 </div>
                 <div class="relative z-0 w-full mb-5 group">
-                    <input type="horario" wire:model="schedule" name="horario" id="horario" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                    <label for="horario" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Horario</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
                     <input type="date" wire:model="start_date" name="fecha_inicio" id="fecha_inicio" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                     <label for="fecha_inicio" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Fecha de Inicio</label>
                 </div>
@@ -43,9 +39,46 @@
                     <input type="date" wire:model="end_date" name="fecha_fin" id="fecha_fin" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                     <label for="fecha_fin" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Fecha de Fin</label>
                 </div>
+                <div class="grid md:grid-cols-2 md:gap-6">
+                    <div class="relative z-0 w-full mb-5 group">
+                        <label for="hora_inicio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora inicio:</label>
+                        <input type="time" id="hora_inicio" wire:model="start_time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
+                    </div>
+                    <div class="relative z-0 w-full mb-5 group">
+                        <label for="hora_fin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora fin:</label>
+                        <input type="time" id="hora_fin" wire:model="end_time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 md:gap-6">
+                    @foreach ($selectedDays as $index => $day)
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="day_{{ $index }}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona un día</label>
+                            <select id="day_{{ $index }}" name="day[]" wire:model="selectedDays.{{ $index }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option>...</option>
+                                <option value="1">Lunes</option>
+                                <option value="2">Martes</option>
+                                <option value="3">Miércoles</option>
+                                <option value="4">Jueves</option>
+                                <option value="5">Viernes</option>
+                                <option value="6">Sábado</option>
+                                <option value="7">Domingo</option>
+                            </select>
+                            <button type="button" wire:click="removeDay({{ $index }})" class="mt-2 text-red-600 hover:text-white border border-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center">
+                                Eliminar
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+                <!-- Botones para agregar más campos -->
+                <div class="relative z-0 w-full mb-5 group">
+                    <button type="button" wire:click="addDay" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                        Agregar otro día
+                    </button>
+                </div>
                 <div class="relative z-0 w-full mb-5 group">
                     <label for="user_id" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent">Selecciona un profesor</label>
-                    <select id="user_id" name="user_id" wire:model="user_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="user_id" name="user_id" wire:model="teacherId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option>...</option>
                         @foreach ($teachers as $teacher)
                             <tr>
@@ -81,16 +114,13 @@
                                     DESCRIPCION
                                 </th>
                                 <th scope="col" class="px-6 py-3">
-                                    CAPACIDAD   
-                                </th>
-                                <th scope="col" class="px-6 py-3">
                                     DURACION
                                 </th>
                                 <th scope="col" class="px-6 py-3">
-                                    HORARIO
+                                    PROFESOR
                                 </th>
                                 <th scope="col" class="px-6 py-3">
-                                    PROFESOR
+                                    HORARIO
                                 </th>
                                 @hasanyrole('SuperAdmin')
                                     <th scope="col" class="px-6 py-3">
@@ -113,19 +143,20 @@
                                             {{$lesson->description}}
                                         </th>
                                         <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                            {{$lesson->capacity}}
+                                            {{$lesson->duration}} H
                                         </th>
                                         <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                            {{$lesson->duration}} H
+                                            @if($lesson->teachers)
+                                            @foreach ($lesson->teachers as $teacher)
+                                                <li>{{ $teacher->name }}</li>
+                                            @endforeach
+                                            @else
+                                                No hay profesores asignados
+                                            @endif
                                         </th>
                                         <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
                                             {{$lesson->schedule}}
                                         </th>
-                                        @foreach ($lesson->teachers as $teacher)
-                                            <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
-                                                {{$teacher->name ? $teacher->name : 'Profesor no encontrado'}}
-                                            </th>
-                                        @endforeach
                                         @hasanyrole('SuperAdmin')
                                             <th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 "> 
                                                 {{$lesson->academy->name}}

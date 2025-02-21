@@ -3,16 +3,18 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\ClaseUser;
+use App\Models\StudentLesson;
 use App\Models\User;
-use App\Models\Clases;
+use App\Models\Lesson;
+use App\Models\AcademyUser;
+use Illuminate\Support\Facades\DB;
 
 class Inscriptions extends Component
 {
     public $id;
-    public $fecha_inscripcion;
-    public $clase_id;
-    public $user_id;
+    public $inscription_date;
+    public $lesson_id;
+    public $student_id;
     public $inscriptions;
     public $inscriptionId;
     public $students;
@@ -20,9 +22,15 @@ class Inscriptions extends Component
 
     public function mount()
     {
+        $sessionUser = auth()->user()->id;
+        // Obtener la academia asociada al usuario
+        $academyId = AcademyUser::where('user_id', $sessionUser)->first()->academy_id;
+
         $this->students = User::role('Estudiante')->get();
-        $this->lessons = Clases::with('teacher')->get();
-        $this->inscriptions = ClaseUser::with('clase','user')->get();
+        $this->lessons = Lesson::where('academy_id', $academyId)
+        ->where('state', 1) // Solo clases activas
+        ->get();
+        $this->updateInscriptions();
     }
 
     public function delete($id)
@@ -37,51 +45,69 @@ class Inscriptions extends Component
 
     public function edit($id)
     {
-        $inscription = ClaseUser::findOrFail($id);
+        $inscription = StudentLesson::findOrFail($id);
 
         $this->inscriptionId = $inscription->id;
-        $this->fecha_inscripcion = $inscription->fecha_inscripcion;
-        $this->clase_id = $inscription->clase_id;
-        $this->user_id = $inscription->user_id;
+        $this->inscription_date = $inscription->inscription_date;
+        $this->lesson_id = $inscription->lesson_id;
+        $this->student_id = $inscription->user_id;
     }
 
     public function update()
     {
         try {
+            DB::beginTransaction();
             $inscription = ClaseUser::findOrFail($this->inscriptionId);
             $inscription->update([
-                'fecha_inscripcion' => $this->fecha_inscripcion,
-                'clase_id' => $this->clase_id,
-                'user_id' => $this->user_id
+                'inscription_date' => $this->inscription_date,
+                'lesson_id' => $this->lesson_id,
+                'user_id' => $this->student_id
             ]);
 
-            return $this->redirect('/ncp/r', navigate: true);
+            DB::commit();
+            $this->updateInscriptions();
+            $this->reset(['inscription_date','lesson_id','student_id']);
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
     public function save()
     {
-        // if (auth()->user()->rol_id == '1') {
-        //     $this->user_id = auth()->user()->id;
-        // } else if(auth()->user()->rol_id == '3') {
-        //     $this->user_id = $this->user_id;
-        // }
-        
         try {
-            ClaseUser::create([
-                'clase_id' => $this->clase_id,
-                'user_id' => $this->user_id,
+            DB::beginTransaction();
+            //valida si el estudiante ya esta inscrito en la clase
+            $inscrito = StudentLesson::where('student_id', $this->student_id)
+            ->where('lesson_id', $this->lesson_id)
+            ->first();
+
+            //si ya esta inscrito no lo deja inscribirse
+            if($inscrito){
+                session()->flash('message', 'El estudiante ya esta inscrito en esta clase.');
+                DB::commit();
+                return;
+            }
+
+            StudentLesson::create([
+                'student_id' => $this->student_id,
+                'lesson_id' => $this->lesson_id,
                 'inscription_date' => now()
             ]);
-            return $this->redirect('/ncp/r', navigate: true);
+            
+            DB::commit();
+            $this->updateInscriptions();
+            $this->reset(['inscription_date','lesson_id','student_id']);
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
-
+    public function updateInscriptions()
+    {
+        $this->inscriptions = StudentLesson::with('lesson','student')->get();
+    }
 
     public function render()
     {

@@ -11,14 +11,14 @@ class TeacherLesson extends Model
     protected $table = 'teacher_lessons';
 
     protected $fillable = [
-        'lesson_id',
+        'schedule_id',
         'user_id'
     ];
 
     //La relacion hasMany indica que una clase puede tener muchas clases-usurios
-    public function lesson()
+    public function schedule()
     {
-        return $this->belongsTo(Lesson::class, 'lesson_id');
+        return $this->belongsTo(Schedule::class, 'schedule_id');
     }
 
     public function user()

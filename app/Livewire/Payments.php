@@ -3,8 +3,13 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Pay;
+use App\Models\StudentPayment;
 use App\Models\User;
+use App\Models\Lesson;
+use App\Models\AcademyUser;
+use App\Models\StudentLesson;
+use Illuminate\Support\Facades\DB;
+use App\Models\PaymentMethod;
 
 class Payments extends Component
 {
@@ -17,12 +22,29 @@ class Payments extends Component
     public $payments;
     public $paymentId;
     public $students;
+    public $lesson_id;
 
+    public $lessonsStudent;
+    public $paymentMethods;
 
     public function mount()
     {
-        $this->payments = Pay::with('user')->get();
-        $this->students = User::role('Estudiante')->get();
+        $sessionUser = auth()->user()->id;
+        // Obtener la academia asociada al usuario
+        $academyId = AcademyUser::where('user_id', $sessionUser)->first()->academy_id;
+
+        $this->paymentMethods = PaymentMethod::all();
+
+        $this->students = User::role('Estudiante')->whereHas('state', function ($query) {
+            $query->where('id', '1'); // Filtra para el estado activo
+        })
+        ->whereHas('academyUsers.academy', function ($query) use ($academyId) {
+            $query->where('id', $academyId); // Filtra por el ID de la academia específica
+        })
+        ->with('academyUsers.academy', 'state')
+        ->get();
+        
+        $this->updatePayments();
     }
 
     public function delete($id)
@@ -37,49 +59,105 @@ class Payments extends Component
 
     public function edit($id)
     {
-        $payment = Pay::findOrFail($id);
+        $payment = StudentPayment::where('id', $id)        
+        ->with('service')
+        ->get();
 
-        $this->paymentId = $payment->id;
-        $this->name = $payment->name;
-        $this->fecha_pago = $payment->fecha_pago;
-        $this->amount = $payment->amount;
-        $this->student_id = $payment->user_id;
+        foreach ($payment as $pay) {
+            $this->id = $pay->id;
+            $this->name = $pay->service->name;
+            $this->description = $pay->description;
+            $this->date = $pay->payment_date;
+            $this->amount = $pay->amount;
+            $this->student_id = $pay->student_id;
+        }
     }
 
     public function update()
     {
         try {
-            $payment = Pay::findOrFail($this->paymentId);
+            DB::beginTransaction();
+            $payment = StudentPayment::findOrFail($this->paymentId);
             $payment->update([
-                'name' => $this->name,
                 'description' => $this->description,
-                'fecha_pago' => $this->fecha_pago,
+                'payment_date' => $this->date,
                 'amount' => $this->amount,
-                'user_id' => $this->student_id,
-                'state_id' => 1
+                'student_id' => $this->student_id,
             ]);
 
-            return $this->redirect('/pym/r', navigate: true);
+            DB::commit();
+            $this->updatePayments();
+            $this->reset(['name','description','date','amount','student_id','lesson_id']);
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
     }
 
     public function save()
     {
         try {
-            Pay::create([
-                'name' => $this->name,
+            DB::beginTransaction();
+            StudentPayment::create([
                 'description' => $this->description,
-                'date' => $this->date,
+                'payment_date' => $this->date,
                 'amount' => $this->amount,
-                'user_id' => $this->student_id,
-                'state_id' => 1
+                'student_id' => $this->student_id,
+                'service_id' => $this->lesson_id
             ]);
-            return $this->redirect('/pym/r',navigate:true); 
+
+            DB::commit();
+            $this->updatePayments();
+            $this->reset(['name','description','date','amount','student_id','lesson_id']);
         } catch (\Exception $th) {
             dd($th);
+            DB::rollBack();
         }
+    }
+
+    public function updatePayments()
+    {
+        $sessionUser = auth()->user()->id;
+        
+        $academyId = AcademyUser::where('user_id', $sessionUser)->first()->academy_id;
+
+        if (User::find($sessionUser)->hasRole('Estudiante')) {
+
+        }
+        if (User::find($sessionUser)->hasRole('Profesor')) {
+
+        }
+        if (User::find($sessionUser)->hasRole('SuperAdmin')) {
+
+        }
+        else if (User::find($sessionUser)->hasRole('Administrador')){
+            // consulta los pago que pertenecen a los usuarios de la academia del usuario
+            $this->payments = StudentPayment::whereHas('user.academyUsers.academy', function ($query) use ($academyId) {
+                $query->where('id', $academyId);
+            })
+            ->with('user', 'paymentMethod')
+            ->get();
+        }
+    }
+
+    //funcion para validar las clases que tiene un estudiante
+    public function getLessons()
+    {
+        $this->lessonsStudent = StudentLesson::where('student_id', $this->student_id)        
+        ->with('lesson')
+        ->get();
+    }
+
+    //funcion que me trae la informacion de la clase seleccionada
+    public function getLesson()
+    {
+        //me trae la clase con los servicios que tiene
+        $lesson = Lesson::where('id', $this->lesson_id)
+        ->with('services')
+        ->first();
+        $this->name = $lesson->name;
+        $this->description = $lesson->description;
+        $this->amount = $lesson->services->first()->price;
     }
 
     public function render()
