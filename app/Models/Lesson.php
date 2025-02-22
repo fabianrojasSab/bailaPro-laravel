@@ -46,6 +46,6 @@ class Lesson extends Model
 
     public function services()
     {
-        return self::hasMany(Service::class, 'id');
+        return self::belongsTo(Service::class, 'service_id');
     }
 }

@@ -64,7 +64,7 @@ class Payments extends Component
         ->get();
 
         foreach ($payment as $pay) {
-            $this->id = $pay->id;
+            $this->paymentId = $pay->id;
             $this->name = $pay->service->name;
             $this->description = $pay->description;
             $this->date = $pay->payment_date;
@@ -99,7 +99,7 @@ class Payments extends Component
         try {
             DB::beginTransaction();
             StudentPayment::create([
-                'description' => $this->description,
+                'description' => $this->name,
                 'payment_date' => $this->date,
                 'amount' => $this->amount,
                 'student_id' => $this->student_id,
@@ -109,6 +109,7 @@ class Payments extends Component
             DB::commit();
             $this->updatePayments();
             $this->reset(['name','description','date','amount','student_id','lesson_id']);
+            $this->lessonsStudent = [];
         } catch (\Exception $th) {
             dd($th);
             DB::rollBack();

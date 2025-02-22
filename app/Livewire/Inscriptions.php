@@ -26,7 +26,10 @@ class Inscriptions extends Component
         // Obtener la academia asociada al usuario
         $academyId = AcademyUser::where('user_id', $sessionUser)->first()->academy_id;
 
-        $this->students = User::role('Estudiante')->get();
+        $this->students = User::role('Estudiante')->whereHas('state', function ($query) {
+            $query->where('id', '1'); // Filtra para el estado activo
+        })->get();;
+
         $this->lessons = Lesson::where('academy_id', $academyId)
         ->where('state', 1) // Solo clases activas
         ->get();
