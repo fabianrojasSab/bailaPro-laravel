@@ -37,6 +37,7 @@ class Schedules extends Component
 
     public function edit($id)
     {
+        $this->toPresence = false;
         $schedule = Schedule::findOrFail($id);
         $this->id = $schedule->id;  
         $this->lesson_id = $schedule->lesson_id;
@@ -52,6 +53,7 @@ class Schedules extends Component
 
     public function presence($scheduleId)
     {
+        $this->toEdit = false;
         $schedule = Schedule::findOrFail($scheduleId);
 
         $this->id = $schedule->id;  
@@ -115,7 +117,7 @@ class Schedules extends Component
                 'end_time' => $this->end_time,
                 'capacity' => $this->capacity,
                 'date' => $this->date,
-                'teacher_id' => $this->teacherId
+                'teacher_id' => $this->teacherId[0]
             ]);
     
             DB::commit();
@@ -150,6 +152,21 @@ class Schedules extends Component
             // Obtener todas las clases programadas del mes actual ordenadas por fecha 
             $this->schedules = Schedule::whereBetween('date', [$startOfMonth, $endOfMonth])->doesntHave('presences')->with('teachers')->orderBy('date', 'asc')->get();
             
+        }
+    }
+
+    public function delete($id)
+    {
+        try{
+            DB::beginTransaction();
+            $schedule = Schedule::findOrFail($id);
+            $schedule->delete();
+            DB::commit();
+            $this->updateSchedules();
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            $this->emit('error', $e->getMessage());
         }
     }
 
