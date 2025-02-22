@@ -117,7 +117,7 @@ class Schedules extends Component
                 'end_time' => $this->end_time,
                 'capacity' => $this->capacity,
                 'date' => $this->date,
-                'teacher_id' => $this->teacherId[0]
+                'teacher_id' => $this->teacherId
             ]);
     
             DB::commit();
