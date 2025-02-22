@@ -16,6 +16,7 @@
             <x-card tittle="Clases" description="Realizar registro de clases, eliminar o editarlas" ruta="lsn.r"/>
             <x-card tittle="Horarios" description="Ver el listado de horarios de clases" ruta="sch.r"/>
             <x-card tittle="Inscripcion de clase" description="Realiza la inscripcion de los estudiantes a las clases disponibles" ruta="ncp.r"/>
+            <x-card tittle="Profesores" description="Ver el listado de profesores, realizar el cambio de estado, ingresar informacion ó eliminar profesores." ruta="tch.r"/>
         @endrole
         @role('SuperAdmin')
             <!-- Contenido para administradores -->

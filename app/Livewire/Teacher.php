@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use App\Models\User;
+use App\Models\AcademyUser;
 
 class Teacher extends Component
 {
@@ -12,14 +14,29 @@ class Teacher extends Component
     public $especialidad;
     public $fecha_contratacion;
     public $name;
-    public $telefono;
+    public $phone;
     public $teachers;
     public $teacherId;
 
+    public $sessionUser;
+    public $students;
+    public $student_id;
+
     public function mount()
     {
-        //traer la informacion del modelo y guardarla en la variable usuarios
-        $this->teachers = User::where('rol_id', 2)->get();
+        $this->sessionUser = auth()->user()->id;
+        $this->updateTeachers();
+
+        $academyId = AcademyUser::where('user_id', $this->sessionUser)->first()->academy_id;
+
+        $this->students = User::role('Estudiante')->whereHas('state', function ($query) {
+            $query->where('id', '1'); // Filtra para el estado activo
+        })
+            ->whereHas('academyUsers.academy', function ($query) use ($academyId) {
+                $query->where('id', $academyId); // Filtra por el ID de la academia específica
+            })
+            ->with('academyUsers.academy', 'state')
+            ->get();
     }
 
     public function delete($id)
@@ -41,7 +58,7 @@ class Teacher extends Component
         $this->especialidad = $teacher->especialidad;
         $this->fecha_contratacion = $teacher->fecha_contratacion;
         $this->name = $teacher->name;
-        $this->telefono = $teacher->telefono;
+        $this->phone = $teacher->phone;
     }
 
     public function update()
@@ -53,7 +70,7 @@ class Teacher extends Component
                 'especialidad' => $this->especialidad,
                 'fecha_contratacion' => $this->fecha_contratacion,
                 'name' => $this->name,
-                'telefono' => $this->telefono
+                'phone' => $this->phone
             ]);
 
             return $this->redirect('/tch/r', navigate: true);
@@ -70,13 +87,63 @@ class Teacher extends Component
                 'especialidad' => $this->especialidad,
                 'fecha_contratacion' => $this->fecha_contratacion,
                 'name' => $this->name,
-                'telefono' => $this->telefono,
+                'phone' => $this->phone,
                 'created_at' => now(),
                 'updated_at' => null
             ]);
             return $this->redirect('/tch/r',navigate:true); 
         } catch (\Exception $th) {
             dd($th);
+        }
+    }
+
+    public function updateTeachers()
+    {
+        if (User::find($this->sessionUser)->hasRole('Profesor')) {
+        }
+        if (User::find($this->sessionUser)->hasRole('SuperAdmin')) {
+
+        } else if (User::find($this->sessionUser)->hasRole('Administrador')) {
+            $academyId = AcademyUser::where('user_id', $this->sessionUser)->first()->academy_id;
+
+            $this->teachers = User::role('Profesor')->whereHas('state', function ($query) {
+                $query->where('id', '1'); // Filtra para el estado activo
+            })
+                ->whereHas('academyUsers.academy', function ($query) use ($academyId) {
+                    $query->where('id', $academyId); // Filtra por el ID de la academia específica
+                })
+                ->with('academyUsers.academy', 'state')
+                ->get();
+        }
+    }
+
+    //Funcion para quitar usuario como profesor
+    public function removeTeacher($id)
+    {
+        try {
+            DB::beginTransaction();
+            $teacher = User::findOrFail($id);
+            $teacher->removeRole('Profesor');
+            $this->updateTeachers();
+            DB::commit();
+        } catch (\Exception $th) {
+            dd($th);
+            DB::rollBack();
+        }
+    }
+
+    //Funcion para agregar estudiante como profesor
+    public function addTeacher()
+    {
+        try {
+            DB::beginTransaction();
+            $teacher = User::findOrFail($this->student_id); 
+            $teacher->assignRole('Profesor');
+            $this->updateTeachers();
+            DB::commit();
+        } catch (\Exception $th) {
+            dd($th);
+            DB::rollBack();
         }
     }
 
